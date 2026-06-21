@@ -15,4 +15,5 @@
 
 
 ## 更新记录
-在ee上学期间被家里的eebot吃了 :(
+- **v1.30**: jmr刨坟,键盘快捷键(Space/Enter继续,数字键选选项),新增!clear和!wait指令,修复CSS bug,移除已废弃的AppCache,修复音频自动播放错误
+- v1.20: 在ee上学期间被家里的eebot吃了 :(
