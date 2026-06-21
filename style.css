@@ -328,6 +328,7 @@ input[type="checkbox"]:checked+label::before {
     bottom: 0;
     letter-spacing: 0.1em;
     line-height: 1.5;
+    overflow-y: auto;
 }
 
 #about-game p {
