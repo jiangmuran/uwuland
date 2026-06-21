@@ -1,3 +1,23 @@
+// 键盘快捷键支持
+let _clickResolver = null;
+let _choiceButtons = [];
+
+document.addEventListener('keydown', (e) => {
+    if (_clickResolver && (e.key === ' ' || e.key === 'Enter')) {
+        e.preventDefault();
+        _clickResolver();
+        _clickResolver = null;
+    }
+    if (_choiceButtons.length > 0 && e.key >= '1' && e.key <= '9') {
+        const idx = parseInt(e.key) - 1;
+        if (idx < _choiceButtons.length) {
+            e.preventDefault();
+            _choiceButtons[idx].click();
+            _choiceButtons = [];
+        }
+    }
+});
+
 // 在底部添加<br>标签=>滚动到底部
 function nextLine() {
     let atBottom=(window.innerHeight+window.scrollY)>=(document.body.scrollHeight-1);
@@ -10,7 +30,7 @@ function nextLine() {
 function playMusic(play,volu=0.4) {
     if (document.getElementById('turn-sound').checked) {
         window.music[play].volume=volu;
-        window.music[play].play();
+        window.music[play].play().catch(()=>{});
     }
 }
 
@@ -126,7 +146,11 @@ function pushQuestion(answers) {
         nextLine();
     })
 
-    return new Promise((res)=>buttons.forEach((b)=>b.onclick=()=>res(b.textContent)))
+    _choiceButtons = buttons;
+    return new Promise((res)=>buttons.forEach((b)=>b.onclick=()=>{
+        _choiceButtons = [];
+        res(b.textContent);
+    }))
 }
 
 
@@ -136,7 +160,15 @@ function pushQuestion(answers) {
  */
 
 function waitClick() {
-    return new Promise((res)=>document.getElementById('main-content').onclick=res)
+    return new Promise((res)=>{
+        _clickResolver = res;
+        document.getElementById('main-content').onclick = () => {
+            if (_clickResolver) {
+                _clickResolver();
+                _clickResolver = null;
+            }
+        };
+    })
 }
 
 
@@ -153,12 +185,10 @@ async function pause() {
 
 
 /**
- * 解析 .zhang-game 文件（zhang-game 脚本）并执行
+ * 解析游戏脚本并执行
  * @param {String} text 
  */
 
-// MrZhang365：你6，这都改了……
-// MrZhang365：故意增加难度啊……
 // ee：新版我改回来了（被打
 
 async function parseText(text,tag=false) {
@@ -180,8 +210,8 @@ async function parseText(text,tag=false) {
 
 
 /**
- * 从目标URL获取并解析、执行 zhang-game 脚本
- * @param {String} url zhang-game 脚本地址
+ * 从目标URL获取并解析、执行游戏脚本
+ * @param {String} url 游戏脚本地址
  */
 
 async function loadText(text,title=false,tag=false) {
@@ -203,7 +233,7 @@ async function loadText(text,title=false,tag=false) {
 
 
 /**
- * 执行 .zhang-game 文件里面的一行
+ * 执行游戏脚本里面的一行
  * @param {String} text 
  */
 
@@ -217,7 +247,7 @@ async function parseLine(text,parseIndex=false) {
     } else {
         const COMMAND=text.slice(1).split(' ')[0].toLocaleLowerCase();
         const ARGS=text.slice(1).split(' ').slice(1).join(' ')||'';
-        const ALLOWED_COMMANDS=['pause','load','exit','pick','head'];
+        const ALLOWED_COMMANDS=['pause','load','exit','pick','head','clear','wait'];
 
         if (!ALLOWED_COMMANDS.includes(COMMAND)) throw new Error(`${COMMAND} 4n0n4me Not Found`)
 
@@ -249,6 +279,10 @@ async function parseLine(text,parseIndex=false) {
             localStorageSet('auto-head',ARGS);
             e.style.backgroundColor=(ARGS[0]=='#')?ARGS:'';
             e.style.backgroundImage=(ARGS.startsWith('url'))?`url('${ARGS}')`:'';
+        } else if (COMMAND==='clear') {
+            document.getElementById('main-content').innerHTML='';
+        } else if (COMMAND==='wait'&&!isNaN(ARGS)) {
+            await new Promise(res=>setTimeout(res,Number(ARGS)));
         }
     }
 }
@@ -317,8 +351,5 @@ async function main() {
 }
 
 
-// MrZhang365：？？？我main函数捏？？？
-// MrZhang365：@ee 我建议你把JS代码全部放在一个或多个JS文件里，而不是放在HTML里面，这样显得非常凌乱。。。
-// MrZhang365：嗯？parseZhangGameFile怎么丢了。。。
-// ee：@MrZhang365 我魔改过（被打
+// ee：我魔改过（被打
 // ee：好吧……我会把文件分开放的 顺便谢谢你的自动存档 uwu！

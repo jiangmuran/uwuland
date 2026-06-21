@@ -4,7 +4,6 @@
     font-size: 18px;
     font-weight: bold;
     outline: none;
-    overflow: hidden;
 }
 
 body {
@@ -31,6 +30,7 @@ h1 {
     max-width: 480px;
     left: 208px;
     top: 240px;
+    overflow-y: auto;
 }
 
 .content button {
@@ -85,7 +85,7 @@ h1 {
     height: 92%;
     cursor: default;
     left: 0;
-    buttom: 0;
+    bottom: 0;
     background-color: white;
 }
 
