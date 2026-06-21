@@ -8,10 +8,10 @@
 
 
 ## 游戏说明
-使用`zhang-game`做的文字游戏  
+使用文字游戏引擎做的文字游戏  
 如果不介意的话 可以作为框架套其他文字游戏  
 修改`drama-init.js`中`window.drama`的内容  
-不过 请保留原作者`MrZhang365`和`PAPEREE`的信息
+不过 请保留原作者`PAPEREE`的信息
 
 
 ## 更新记录
