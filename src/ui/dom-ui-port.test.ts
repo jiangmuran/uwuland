@@ -93,6 +93,28 @@ describe('createDomUIPort: clearText / pause', () => {
     await done;
     expect(document.getElementById('main-content')!.innerHTML).toBe('');
   });
+
+  it('pause在"等待点击"之前就同步调用onPause(点击前即存档,匹配原引擎时机)', async () => {
+    let onPauseCalls = 0;
+    const ui = createDomUIPort(() => {
+      onPauseCalls++;
+    });
+    const done = ui.pause();
+    // 关键断言:此刻玩家还没点击、pause 也还没 resolve,onPause 就必须已经被调用过。
+    // 这证明存档发生在"等待点击"之前而非之后——即使玩家从不点击直接关掉标签页也已存档。
+    expect(onPauseCalls).toBe(1);
+    (document.getElementById('main-content') as HTMLElement).click();
+    await done;
+    // 点击并 resolve 之后不应再额外触发一次。
+    expect(onPauseCalls).toBe(1);
+  });
+
+  it('不传 onPause 时默认无操作,pause 仍正常工作', async () => {
+    const ui = createDomUIPort();
+    const done = ui.pause();
+    (document.getElementById('main-content') as HTMLElement).click();
+    await expect(done).resolves.toBeUndefined();
+  });
 });
 
 describe('createDomUIPort: runPuzzle', () => {

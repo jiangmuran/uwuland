@@ -47,7 +47,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-export function createDomUIPort(): UIPort {
+export function createDomUIPort(onPause: () => void = () => {}): UIPort {
   return {
     async showText(text, style) {
       const wasAtBottom = isAtBottom();
@@ -118,6 +118,9 @@ export function createDomUIPort(): UIPort {
     },
 
     async pause() {
+      // 和原 game-engine.js 的 parseLine 一致:自动存档发生在"等待点击"之前,
+      // 而不是之后——这样即便玩家在未点击的暂停画面上直接关掉标签页,也已在此存档。
+      onPause();
       await new Promise<void>((resolve) => {
         clickResolver = resolve;
         mainContent().onclick = () => {

@@ -8,7 +8,9 @@ import type { ScriptResult } from './engine/interpreter';
 import type { SaveData } from './engine/state';
 
 const FIRST_CHAPTER = '一、白色的鸟';
-const ui = createDomUIPort();
+// autoSaveIfEnabled 是下面的函数声明(hoisted),此处只是把引用传进去,
+// 直到玩家真正触发 !pause 时才会被调用,那时 currentState 早已初始化。
+const ui = createDomUIPort(autoSaveIfEnabled);
 let currentState = new GameState();
 
 function nowString(): string {
