@@ -1,0 +1,102 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { createDomUIPort } from './dom-ui-port';
+
+function setUpDom(intervalValue: string): void {
+  document.body.innerHTML = `
+    <div id="main-content"></div>
+    <div id="head"></div>
+    <input id="interval-range" value="${intervalValue}">
+  `;
+}
+
+describe('createDomUIPort: showText', () => {
+  it('interval为0时,一次性显示完整文本并套上对应class', async () => {
+    setUpDom('0');
+    await createDomUIPort().showText('你好', 'small');
+    const p = document.querySelector('#main-content p')!;
+    expect(p.textContent).toBe('你好');
+    expect(p.classList.contains('small')).toBe(true);
+  });
+
+  it('interval大于0时,逐字显示', async () => {
+    setUpDom('10');
+    vi.useFakeTimers();
+    const done = createDomUIPort().showText('abc', 'normal');
+    const p = () => document.querySelector('#main-content p')!;
+    expect(p().textContent).toBe('a');
+    await vi.advanceTimersByTimeAsync(10);
+    expect(p().textContent).toBe('ab');
+    await vi.advanceTimersByTimeAsync(10);
+    expect(p().textContent).toBe('abc');
+    await vi.advanceTimersByTimeAsync(10);
+    await done;
+    vi.useRealTimers();
+  });
+});
+
+describe('createDomUIPort: showChoices', () => {
+  beforeEach(() => setUpDom('0'));
+
+  it('每个选项生成一个按钮,点击后resolve对应下标', async () => {
+    const ui = createDomUIPort();
+    const resultPromise = ui.showChoices(['选项A', '选项B']);
+    const buttons = document.querySelectorAll('#main-content button');
+    expect(buttons).toHaveLength(2);
+    (buttons[1] as HTMLButtonElement).click();
+    expect(await resultPromise).toBe(1);
+  });
+});
+
+describe('createDomUIPort: setHead', () => {
+  beforeEach(() => setUpDom('0'));
+
+  it('#开头的值设置backgroundColor', () => {
+    createDomUIPort().setHead('#4f0');
+    const head = document.getElementById('head')!;
+    expect(head.style.backgroundColor).not.toBe('');
+    expect(head.style.backgroundImage).toBe('');
+  });
+
+  it('url开头的值走图片分支、不被当作背景色(忠实保留原引擎 url() 双层包裹怪癖)', () => {
+    createDomUIPort().setHead("url('x.png')");
+    const head = document.getElementById('head')!;
+    // url 值不是 # 开头,不会被塞进背景色(与上面的 #hex 用例对照,证明确实走了图片分支)
+    expect(head.style.backgroundColor).toBe('');
+    // 忠实移植 game-engine.js:对以 "url" 开头的值再包一层 -> `url('url('x.png')')`。
+    // 这是无效 CSS(嵌套单引号),happy-dom 会丢弃它 -> ''。该分支现有内容从未使用
+    // (全是 #hex 颜色),是原引擎既有怪癖,不是本次移植引入的新问题。
+    expect(head.style.backgroundImage).toBe('');
+  });
+
+  it('空值不生效(保持原样,不清空已有样式)', () => {
+    const head = document.getElementById('head')!;
+    head.style.backgroundColor = 'red';
+    createDomUIPort().setHead('');
+    expect(head.style.backgroundColor).toBe('red');
+  });
+});
+
+describe('createDomUIPort: clearText / pause', () => {
+  beforeEach(() => setUpDom('0'));
+
+  it('clearText清空#main-content', () => {
+    document.getElementById('main-content')!.innerHTML = '<p>x</p>';
+    createDomUIPort().clearText();
+    expect(document.getElementById('main-content')!.innerHTML).toBe('');
+  });
+
+  it('pause在点击#main-content后resolve,并清空内容', async () => {
+    const ui = createDomUIPort();
+    document.getElementById('main-content')!.innerHTML = '<p>previous</p>';
+    const done = ui.pause();
+    (document.getElementById('main-content') as HTMLElement).click();
+    await done;
+    expect(document.getElementById('main-content')!.innerHTML).toBe('');
+  });
+});
+
+describe('createDomUIPort: runPuzzle', () => {
+  it('还没有谜题框架,调用时抛出清晰错误', async () => {
+    await expect(createDomUIPort().runPuzzle('anything')).rejects.toThrow(/谜题/);
+  });
+});

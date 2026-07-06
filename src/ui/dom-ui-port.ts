@@ -1,0 +1,139 @@
+import type { UIPort, TextStyle } from '../engine/ui-port';
+import { playSound } from './audio';
+
+const STYLE_CLASS: Record<TextStyle, string> = {
+  normal: 'normal',
+  small: 'small',
+  big: 'big',
+  italic: 'italic',
+};
+
+function mainContent(): HTMLElement {
+  const el = document.getElementById('main-content');
+  if (!el) throw new Error('缺少 #main-content 元素');
+  return el;
+}
+
+function isAtBottom(): boolean {
+  return window.innerHeight + window.scrollY >= document.body.scrollHeight - 1;
+}
+
+function scrollToBottomIfNeeded(wasAtBottom: boolean): void {
+  if (wasAtBottom) window.scrollTo(0, document.body.scrollHeight);
+}
+
+function textIntervalMs(): number {
+  const range = document.getElementById('interval-range') as HTMLInputElement | null;
+  return range ? Number(range.value) : 60;
+}
+
+let clickResolver: (() => void) | null = null;
+let choiceButtons: HTMLButtonElement[] = [];
+
+document.addEventListener('keydown', (e) => {
+  if (clickResolver && (e.key === ' ' || e.key === 'Enter')) {
+    e.preventDefault();
+    const resolve = clickResolver;
+    clickResolver = null;
+    resolve();
+  }
+  if (choiceButtons.length > 0 && e.key >= '1' && e.key <= '9') {
+    const idx = Number(e.key) - 1;
+    if (idx < choiceButtons.length) {
+      e.preventDefault();
+      choiceButtons[idx].click();
+      choiceButtons = [];
+    }
+  }
+});
+
+export function createDomUIPort(): UIPort {
+  return {
+    async showText(text, style) {
+      const wasAtBottom = isAtBottom();
+      const el = document.createElement('p');
+      el.classList.add(STYLE_CLASS[style]);
+      mainContent().appendChild(el);
+      scrollToBottomIfNeeded(wasAtBottom);
+
+      const interval = textIntervalMs();
+      if (interval === 0) {
+        el.textContent = text;
+        return;
+      }
+
+      el.textContent = text[0] ?? '';
+      await new Promise<void>((resolve) => {
+        let i = 1;
+        const timer = setInterval(() => {
+          if (i >= text.length) {
+            clearInterval(timer);
+            resolve();
+            return;
+          }
+          el.textContent += text[i];
+          i++;
+        }, interval);
+      });
+    },
+
+    async showChoices(options) {
+      const buttons: HTMLButtonElement[] = [];
+      const wasAtBottom = isAtBottom();
+      for (const label of options) {
+        const el = document.createElement('button');
+        el.textContent = label;
+        mainContent().appendChild(el);
+        mainContent().appendChild(document.createElement('br'));
+        buttons.push(el);
+      }
+      scrollToBottomIfNeeded(wasAtBottom);
+      choiceButtons = buttons;
+      return new Promise<number>((resolve) => {
+        buttons.forEach((button, idx) => {
+          button.onclick = () => {
+            choiceButtons = [];
+            resolve(idx);
+          };
+        });
+      });
+    },
+
+    setHead(value) {
+      const head = document.getElementById('head');
+      if (!head || !value) return;
+      head.style.backgroundColor = value.startsWith('#') ? value : '';
+      // 和原 game-engine.js 的 !head 处理逻辑完全一致(含它对 "url(...)" 值会套双层
+      // url() 的这个既有小怪癖)——现有4章内容只用过 #hex 颜色,从没走到这条分支,
+      // 这里只是原样保留未使用过的旧行为,不是这次移植引入的新问题。
+      head.style.backgroundImage = value.startsWith('url') ? `url('${value}')` : '';
+    },
+
+    clearText() {
+      mainContent().innerHTML = '';
+    },
+
+    wait(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    },
+
+    async pause() {
+      await new Promise<void>((resolve) => {
+        clickResolver = resolve;
+        mainContent().onclick = () => {
+          if (clickResolver) {
+            const r = clickResolver;
+            clickResolver = null;
+            r();
+          }
+        };
+      });
+      playSound('button01a');
+      mainContent().innerHTML = '';
+    },
+
+    async runPuzzle(name) {
+      throw new Error(`谜题框架还没实现(计划4),不应该有内容调用 !puzzle "${name}"`);
+    },
+  };
+}
