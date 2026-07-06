@@ -108,6 +108,16 @@ describe('runScript: !pick 与条件门槛', () => {
     );
     expect(result).toEqual({ type: 'jump', target: '目标A' });
   });
+
+  it('throws a clear error (not an opaque TypeError) when every option condition is false', async () => {
+    const ui = new FakeUIPort();
+    const state = new GameState();
+    // 既没有 key 也没有 crowbar,两个选项的条件都为 false,过滤后没有任何可展示的选项。
+    // 期望抛出一条指向内容错误的清晰错误,而不是 available[chosen].idx 的 TypeError。
+    await expect(
+      runScript(parseScript('!pick 开门|撬锁 目标A|目标B :: has key|has crowbar'), state, ui),
+    ).rejects.toThrow(/!pick 没有任何可用选项/);
+  });
 });
 
 describe('runScript: !puzzle', () => {

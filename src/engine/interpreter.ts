@@ -84,6 +84,14 @@ async function execNode(node: ScriptNode, ctx: RunContext): Promise<ScriptResult
           const condition = node.conditions[idx];
           return !condition || evaluateExpression(condition, state);
         });
+      if (available.length === 0) {
+        // 内容作者错误:这个 !pick 的每个选项条件都为 false,过滤后没有任何选项可展示。
+        // 若不拦截,下面 available[chosen] 会是 undefined,抛出令人费解的 TypeError。
+        throw new Error(
+          `!pick 没有任何可用选项:所有选项的条件都为 false(选项:${node.options.join(' | ')})。` +
+            `请为该 !pick 增加一个无条件或条件恒为 true 的兜底选项。`,
+        );
+      }
       const chosen = await ui.showChoices(available.map((o) => o.label));
       const target = node.targets[available[chosen].idx];
       return { type: 'jump', target };
