@@ -113,6 +113,21 @@ export function createDomUIPort(onPause: () => void = () => {}): UIPort {
       mainContent().innerHTML = '';
     },
 
+    announceChapter(name) {
+      // 忠实移植原 game-engine.js 的 loadText 标题逻辑:填入标题、加 .title 类触发
+      // style.css 里已定义好的 3 秒淡出动画、显示,再在 3000ms 后隐藏并移除该类。
+      const title = document.getElementById('title');
+      const heading = document.querySelector('#title h1');
+      if (!title || !heading) return;
+      heading.textContent = name;
+      title.classList.add('title');
+      title.style.display = 'block';
+      setTimeout(() => {
+        title.style.display = 'none';
+        title.classList.remove('title');
+      }, 3000);
+    },
+
     wait(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
     },

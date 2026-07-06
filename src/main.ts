@@ -43,8 +43,12 @@ async function playFromStart(): Promise<void> {
 }
 
 async function playFromSave(data: SaveData): Promise<void> {
-  const run = await resumeChapter(data, ui, loadChapterScript);
-  currentState = run.state;
+  // 关键:通过回调在"重放的任何 !pause 触发之前"就把 currentState 指向重建好的 state。
+  // 否则重放期间每次 !pause 触发的自动存档会读到旧的 currentState,把刚读取的存档写坏。
+  const run = await resumeChapter(data, ui, loadChapterScript, (state) => {
+    currentState = state;
+  });
+  currentState = run.state; // 指向同一个对象,保持与其它路径一致(此处已是 no-op)
   autoSaveIfEnabled();
   await driveUntilExit(run.result);
 }

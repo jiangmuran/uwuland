@@ -117,6 +117,35 @@ describe('createDomUIPort: clearText / pause', () => {
   });
 });
 
+describe('createDomUIPort: announceChapter', () => {
+  it('填入标题文字、显示 #title 并加 .title 类,3000ms 后隐藏并移除该类', () => {
+    vi.useFakeTimers();
+    // 复刻 index.html 里既有的 #title 结构(默认 display:none)。
+    document.body.innerHTML = `
+      <div id="main-content"></div>
+      <div id="title" class="uwu" style="display:none"><h1></h1><p>- eebot And FoolishBird's Travel-</p></div>
+    `;
+    const title = document.getElementById('title') as HTMLElement;
+    const heading = document.querySelector('#title h1') as HTMLElement;
+
+    const ui = createDomUIPort();
+    // announceChapter 是可选方法,dom 实现里一定存在,用 ! 断言以避免测试被 ?. 静默跳过成空测。
+    ui.announceChapter!('一、白色的鸟');
+
+    // 立即:标题文字已填入,#title 显示且带上触发淡出动画的 .title 类。
+    expect(heading.textContent).toBe('一、白色的鸟');
+    expect(title.style.display).toBe('block');
+    expect(title.classList.contains('title')).toBe(true);
+
+    // 动画结束(3000ms)后:隐藏 #title 并移除 .title 类,回到初始状态。
+    vi.advanceTimersByTime(3000);
+    expect(title.style.display).toBe('none');
+    expect(title.classList.contains('title')).toBe(false);
+
+    vi.useRealTimers();
+  });
+});
+
 describe('createDomUIPort: runPuzzle', () => {
   it('还没有谜题框架,调用时抛出清晰错误', async () => {
     await expect(createDomUIPort().runPuzzle('anything')).rejects.toThrow(/谜题/);
