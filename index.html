@@ -14,14 +14,14 @@
         <div id="window" class="transitions">
             <div id="window-header">
                 <h1>uwuland - PAPEREE</h1>
-                <p><span id="hide" onclick="changeState('window',true)">⊖</span><span id="kick" onclick="shake()">⊗</span></p>
+                <p><span id="hide">⊖</span><span id="kick">⊗</span></p>
             </div>
             <div id="home" class="uwu">
                 <h1>『UWULAND』</h1>
-                <p onclick="changeState('home',true),main()">Start</p>
-                <p onclick="fileSaveLoad(false)">Load</p>
-                <p onclick="changeState('setting')">Set</p>
-                <p onclick="changeState('about')">About</p>
+                <p id="start-button">Start</p>
+                <p id="home-load-button">Load</p>
+                <p id="home-set-button">Set</p>
+                <p id="home-about-button">About</p>
                 <div id="copyright"><span>©2023 PAPEREE</span></div>
             </div>
             <div id="about" class="uwu">
@@ -33,24 +33,24 @@
                     <p><u>You</u>: 有什么更新吗？<br><u>ee</u>: 2023年的老游戏被jmr刨坟挖出来了，顺手做了点小优化——键盘快捷键、新指令、修了bug，因组织变动删掉了一些敏感内容，自己发了一个版本捏。</p>
                 </div>
                 <div class="arrow">
-                    <p><span onclick="changeState('about',true)">❮</span></p>
+                    <p><span id="about-back">❮</span></p>
                 </div>
             </div>
             <div id="title" class="uwu"><h1></h1><p>- eebot And FoolishBird's Travel-</p></div>
             <div id="setting" class="uwu">
                 <div id="range">
                     <p><span>文字速度</span><span id="interval-num">60</span></p>
-                    <input type="range" id="interval-range" class="range" min="0" max="120" value="60" step="1" oninput="changeInterval()">
+                    <input type="range" id="interval-range" class="range" min="0" max="120" value="60" step="1">
                     <p><span>固定窗口</span><input id="dock-window" type="checkbox"><label for="dock-window"></label><span>开启音效</span><input id="turn-sound" type="checkbox" checked><label for="turn-sound"></label><span>自动存档</span><input id="turn-auto" type="checkbox" checked><label for="turn-auto"></label></p>
                     <p id="ee-bb">别问为什么是Set不是Setting<br>因为Setting太长了 强迫症很难受（被打</p>
                 </div>
                 <div class="arrow">
-                    <p><span onclick="changeState('setting',true)">❮</span></p>
+                    <p><span id="setting-back">❮</span></p>
                 </div>
             </div>
             <div id="file-page" class="uwu">
                 <div class="arrow">
-                    <p><span onclick="changeState('file-page',true)">❮</span></p>
+                    <p><span id="file-page-back">❮</span></p>
                 </div>
                 <div id="file-list">
                     <div class="box" id="auto">
@@ -67,28 +67,26 @@
                 <div id="head"></div>
                 <div id="main-content" class="content"></div>
                 <div class="tool">
-                    <p><span onclick="changeState('home')">Home</span><span onclick="fileSaveLoad(true)">Save</span><span onclick="fileSaveLoad(false)">Load</span><span onclick="changeState('setting')">Set</span><span onclick="changeState('about')">About</span></p>
+                    <p><span id="tool-home">Home</span><span id="tool-save">Save</span><span id="tool-load">Load</span><span id="tool-set">Set</span><span id="tool-about">About</span></p>
                 </div>
             </div>
         </div>
         <div id="state">
-            <div id="close" onclick="changeState('state',true)"><p>×</p></div>
+            <div id="close"><p>×</p></div>
             <h1>paperee's <u>文字游戏引擎</u></h1>
-            <p><u>Engine</u>: game-engine<br><u>New UI</u>: PAPEREE</p>
+            <p><u>Engine</u>: uwuland-engine v2(TS重写)<br><u>New UI</u>: PAPEREE</p>
             <p><u>Update</u>: 2023.03.12~2026.06.22</br><u>Version</u>: uwu.1.30</p>
             <p><u>GitHub</u>:</br><a href="https://github.com/paperee/uwuland" target="_blank">https://github.com/paperee/uwuland</a></p>
         </div>
         <div id="bottom">
             <div id="time"><p>1919.08.10 11:45:14</p></div>
-            <div id="thumbnail" onclick="changeState('window')"><p>uwuland - PAPEREE</p></div>
-            <div id="menu" onclick="changeState('state')"><p>☰</p></div>
+            <div id="thumbnail"><p>uwuland - PAPEREE</p></div>
+            <div id="menu"><p>☰</p></div>
         </div>
         <div id="back"><p>uwu</p></div>
     </div>
     <div id="small-screen">
         <p>Error: 你的屏幕太小了 uwu</p>
     </div>
-    <script src="drama-init.js"></script>
-    <script src="game-engine.js"></script>
-    <script src="ee-main.js"></script>
+    <script type="module" src="/src/main.ts"></script>
 </body>
