@@ -1,5 +1,6 @@
 import type { UIPort, TextStyle } from '../engine/ui-port';
 import { playSound } from './audio';
+import { runPuzzle as dispatchPuzzle } from './puzzles/registry';
 
 const STYLE_CLASS: Record<TextStyle, string> = {
   normal: 'normal',
@@ -150,8 +151,8 @@ export function createDomUIPort(onPause: () => void = () => {}): UIPort {
       mainContent().innerHTML = '';
     },
 
-    async runPuzzle(name) {
-      throw new Error(`谜题框架还没实现(计划4),不应该有内容调用 !puzzle "${name}"`);
+    runPuzzle(name) {
+      return dispatchPuzzle(name, mainContent());
     },
   };
 }

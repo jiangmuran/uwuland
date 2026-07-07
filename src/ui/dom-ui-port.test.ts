@@ -147,7 +147,23 @@ describe('createDomUIPort: announceChapter', () => {
 });
 
 describe('createDomUIPort: runPuzzle', () => {
-  it('还没有谜题框架,调用时抛出清晰错误', async () => {
-    await expect(createDomUIPort().runPuzzle('anything')).rejects.toThrow(/谜题/);
+  beforeEach(() => setUpDom('0'));
+
+  it('委托给谜题注册表,真正的谜题结果会被返回', async () => {
+    vi.useFakeTimers();
+    const ui = createDomUIPort();
+    const promise = ui.runPuzzle('base64decode:aGVsbG8=');
+    const input = document.querySelector('#main-content input') as HTMLInputElement;
+    input.value = 'hello';
+    (document.querySelector('#main-content button') as HTMLButtonElement).click();
+    await vi.advanceTimersByTimeAsync(500);
+    const result = await promise;
+    expect(result).toEqual({ success: true, attempts: 1 });
+    vi.useRealTimers();
+  });
+
+  it('未注册的谜题类型时,Promise reject 并带清晰错误信息(不再是"还没实现"占位,是真实的注册表校验)', async () => {
+    const ui = createDomUIPort();
+    await expect(ui.runPuzzle('不存在的谜题类型')).rejects.toThrow(/谜题/);
   });
 });
