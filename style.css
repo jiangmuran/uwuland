@@ -1,6 +1,12 @@
+:root {
+    --ink: #7D5A30;
+    --accent: #eDcAa0;
+    --font-stack: "Consolas","Microsoft Yahei UI","Microsoft YaHei","Yu Gothic Medium";
+}
+
 * {
-    font-family: "Consolas","Microsoft Yahei UI","Microsoft YaHei","Yu Gothic Medium";
-    color: #7D5A30;
+    font-family: var(--font-stack);
+    color: var(--ink);
     font-size: 18px;
     font-weight: bold;
     outline: none;
@@ -23,7 +29,7 @@ h1 {
 .content {
     position: absolute;
     padding: 0 20px;
-    border: solid 2px #7D5A30;
+    border: solid 2px var(--ink);
     border-radius: 0 16px 16px 0;
     background-color: white;
     height: 160px;
@@ -59,7 +65,7 @@ h1 {
     width: 100%;
     min-width: 40%;
     margin: 0 8px;
-    border: solid 2px #7D5A30;
+    border: solid 2px var(--ink);
     border-radius: 5px;
     cursor: pointer;
     background-color: white;
@@ -70,7 +76,7 @@ h1 {
 
 .box:hover {
     transform: rotate(-1deg);
-    background-color: #eDcAa0;
+    background-color: var(--accent);
 }
 
 .oops {
@@ -113,7 +119,7 @@ h1 {
 
 .tool {
     transform: rotate(-1.5deg);
-    border-bottom: solid 2px #7D5A30;
+    border-bottom: solid 2px var(--ink);
 }
 
 .tool span,.arrow span {
@@ -139,8 +145,8 @@ h1 {
 
 .range[type="range"]::-webkit-slider-runnable-track {
     height: 12px;
-    background-color: #eDcAa0;
-    border: solid 2px #7D5A30;
+    background-color: var(--accent);
+    border: solid 2px var(--ink);
 }
 
 .range[type="range" i]::-webkit-slider-container {
@@ -152,8 +158,8 @@ h1 {
     appearance: none;
     width: 20px;
     height: 12px;
-    background-color: #7D5A30;
-    border: solid 2px #7D5A30;
+    background-color: var(--ink);
+    border: solid 2px var(--ink);
     margin-top: -2px;
 }
 
@@ -168,7 +174,7 @@ input[type="checkbox"]+label {
     height: 10px;
     cursor: pointer;
     background: white;
-    border: solid 2px #7D5A30;
+    border: solid 2px var(--ink);
     margin-right: 66px;
     text-indent: -1px;
     margin-left: -18px;
@@ -179,8 +185,8 @@ input[type="checkbox"]:checked+label::before {
     content: 'uwu';
     text-align: center;
     font-size: 26px;
-    background: #eDcAa0;
-    color: #7D5A30;
+    background: var(--accent);
+    color: var(--ink);
 }
 
 #back p {
@@ -188,7 +194,7 @@ input[type="checkbox"]:checked+label::before {
     color: white;
     text-align: center;
     cursor: default;
-    text-shadow: -2px -2px 0 #eDcAa0,2px -2px 0 #eDcAa0,-2px 2px 0 #eDcAa0,2px 2px 0 #eDcAa0;
+    text-shadow: -2px -2px 0 var(--accent),2px -2px 0 var(--accent),-2px 2px 0 var(--accent),2px 2px 0 var(--accent);
     margin: 0;
     text-decoration: underline;
     transform: rotate(-2deg);
@@ -200,7 +206,7 @@ input[type="checkbox"]:checked+label::before {
     background-size: cover;
     background-position: center center;
     position: absolute;
-    border: solid 2px #7D5A30;
+    border: solid 2px var(--ink);
     height: 160px;
     width: 160px;
     left: 28px;
@@ -215,7 +221,7 @@ input[type="checkbox"]:checked+label::before {
     overflow: hidden;
     position: fixed;
     letter-spacing: 0;
-    border-top: solid 2px #7D5A30;
+    border-top: solid 2px var(--ink);
     cursor: default;
 }
 
@@ -232,14 +238,14 @@ input[type="checkbox"]:checked+label::before {
     top: -10px;
     padding-right: 300px;
     padding-left: 32px;
-    border-right: dashed 2px #7D5A30;
-    border-left: dashed 2px #7D5A30;
+    border-right: dashed 2px var(--ink);
+    border-left: dashed 2px var(--ink);
     background-color: white;
     transition: all 0.2s;
 }
 
 #thumbnail:hover {
-    background-color: #eDcAa0;
+    background-color: var(--accent);
 }
 
 #menu {
@@ -260,7 +266,7 @@ input[type="checkbox"]:checked+label::before {
 
 #window {
     position: absolute;
-    border: solid 2px #7D5A30;
+    border: solid 2px var(--ink);
     border-radius: 20px 20px 5px 5px;
     margin: auto;
     width: 760px;
@@ -272,9 +278,9 @@ input[type="checkbox"]:checked+label::before {
 #window-header {
     height: 20px;
     padding: 10px 20px;
-    border-bottom: solid 2px #7D5A30;
+    border-bottom: solid 2px var(--ink);
     border-radius: 18px 18px 0 0;
-    background-color: #eDcAa0;
+    background-color: var(--accent);
 }
 
 #window-header h1 {
@@ -359,8 +365,8 @@ input[type="checkbox"]:checked+label::before {
     bottom: 42px;
     width: auto;
     height: auto;
-    border-right: solid 2px #7D5A30;
-    border-top: solid 2px #7D5A30;
+    border-right: solid 2px var(--ink);
+    border-top: solid 2px var(--ink);
     border-radius: 0 5px;
     background-color: white;
     padding: 10px;
@@ -416,13 +422,7 @@ input[type="checkbox"]:checked+label::before {
     margin-left: 10px;
     padding-left: 20px;
     line-height: 2;
-    border-left: solid 4px #7D5A30;
-}
-
-#small-screen {
-    text-align: center;
-    cursor: default;
-    display: none;
+    border-left: solid 4px var(--ink);
 }
 
 @keyframes shake {
@@ -467,15 +467,5 @@ input[type="checkbox"]:checked+label::before {
     }
     100% {
         opacity: 0;
-    }
-}
-
-@media screen and ((max-width: 792px) or (max-height: 544px)) {
-    #big-screen {
-        display: none;
-    }
-
-    #small-screen {
-        display: block;
     }
 }
