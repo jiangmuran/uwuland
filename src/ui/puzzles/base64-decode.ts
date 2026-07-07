@@ -7,15 +7,14 @@ export function mountBase64Decode({ container, param, resolve }: PuzzleContext):
   try {
     correctAnswer = atob(param);
   } catch {
-    container.innerHTML = '';
     const error = document.createElement('p');
     error.textContent = `谜题配置错误:"${param}" 不是合法的 Base64`;
     container.appendChild(error);
     return;
   }
 
-  container.innerHTML = '';
-
+  // 追加渲染而不是清空容器:和 showChoices 的行为保持一致,不吞掉谜题前面
+  // 已经打出来的剧情文字(比如"所以，解码的结果是？"这行)。
   const prompt = document.createElement('p');
   prompt.textContent = `密文:${param}`;
   container.appendChild(prompt);
