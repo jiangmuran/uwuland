@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { zfill, changeState, renderFilePage } from './chrome';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { zfill, changeState, renderFilePage, initChrome, isMobileLayout } from './chrome';
 import { saveGame } from '../engine/save';
 import { GameState } from '../engine/state';
 
@@ -70,5 +70,62 @@ describe('renderFilePage', () => {
     expect(document.getElementById('auto')!.style.display).toBe('none');
     (document.getElementById('manual') as HTMLElement).click();
     expect(onSave).toHaveBeenCalledWith('manual');
+  });
+});
+
+describe('isMobileLayout / dragWindow 在移动端下的行为', () => {
+  function mockMatchMedia(matches: boolean): void {
+    window.matchMedia = ((query: string) => ({
+      matches,
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    })) as unknown as typeof window.matchMedia;
+  }
+
+  beforeEach(() => {
+    // initChrome() 内部会调用 startTime(),它用 setTimeout 递归调度自己;
+    // 用 fake timer 避免这个定时器泄漏到后面其它测试里。
+    vi.useFakeTimers();
+    document.body.innerHTML = `
+      <div id="window"><div id="window-header"></div></div>
+      <input id="dock-window" type="checkbox">
+    `;
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('isMobileLayout 直接反映 matchMedia 的结果', () => {
+    mockMatchMedia(true);
+    expect(isMobileLayout()).toBe(true);
+    mockMatchMedia(false);
+    expect(isMobileLayout()).toBe(false);
+  });
+
+  it('移动端下 initChrome 不会恢复保存的窗口位置,也不会绑定拖拽', () => {
+    localStorage.setItem('save-position', '100 200');
+    mockMatchMedia(true);
+    initChrome();
+    const el = document.getElementById('window') as HTMLElement;
+    expect(el.style.top).toBe('');
+    expect(el.style.left).toBe('');
+    expect(document.getElementById('window-header')!.onmousedown).toBeNull();
+  });
+
+  it('桌面端下 initChrome 仍然恢复保存的窗口位置并绑定拖拽', () => {
+    localStorage.setItem('save-position', '100 200');
+    mockMatchMedia(false);
+    initChrome();
+    const el = document.getElementById('window') as HTMLElement;
+    expect(el.style.top).toBe('100px');
+    expect(el.style.left).toBe('200px');
+    expect(document.getElementById('window-header')!.onmousedown).not.toBeNull();
   });
 });

@@ -59,7 +59,14 @@ function changeInterval(): void {
   localStorage.setItem('interval-num', range.value);
 }
 
+const MOBILE_MEDIA_QUERY = '(max-width: 792px), (max-height: 544px)';
+
+export function isMobileLayout(): boolean {
+  return window.matchMedia(MOBILE_MEDIA_QUERY).matches;
+}
+
 function dragWindow(): void {
+  if (isMobileLayout()) return;
   const el = document.getElementById('window');
   const header = document.getElementById('window-header');
   if (!el) return;
