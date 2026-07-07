@@ -450,7 +450,7 @@ git commit -m "feat: wire dom-ui-port's runPuzzle to the real puzzle registry"
 !load 四、蓝色的海
 ```
 
-`Ym90cyBhbmQgY2hpcHM=` 和原来 `!pick` 选项里的密文答案是同一个(`atob('Ym90cyBhbmQgY2hpcHM=')` = `bots&chips`),沿用原有剧情设定的答案,只是现在需要玩家自己输入,不再是点选项。谜题成功后直接 `!load` 到第四章,不再需要 `!pick` 那层——玩题解出来本身就是唯一的"选择"。**谜题和章节收尾之间不能插入 `!pause`**(见本计划 Global Constraints 里对续读存档的说明),改完之后确认这两行之间、以及`!puzzle`到文件末尾之间都没有 `!pause`。
+`Ym90cyBhbmQgY2hpcHM=` 和原来 `!pick` 里显示的密文是同一串字符——但实际解码结果是 `bots and chips`(带空格、and拼全),不是原来按钮上写的 `bots&chips`。原作者当年那个按钮标签看来是密文的一个简化/双关写法,不是密文的真实解码结果,以前只是个不校验的装饰性按钮所以没人注意到;现在谜题真的要校验解码结果,玩家需要输入的正确答案是 `bots and chips`。谜题成功后直接 `!load` 到第四章,不再需要 `!pick` 那层——玩题解出来本身就是唯一的"选择"。**谜题和章节收尾之间不能插入 `!pause`**(见本计划 Global Constraints 里对续读存档的说明),改完之后确认这两行之间、以及`!puzzle`到文件末尾之间都没有 `!pause`。
 
 - [ ] **Step 2: 更新 `manifest.test.ts` 里对应的断言**
 
@@ -512,7 +512,7 @@ git commit -m "feat: turn chapter 3's Base64 reveal into a real interactive puzz
 - 谜题UI是否正确显示密文、输入框、提交按钮。
 - 故意输错2次,确认能重试、每次提示"第N次尝试"。
 - 第3次错误时,确认提示文案里出现"提示"字样。
-- 输入正确答案(`bots&chips`),确认显示"解密成功"并自动跳转到第四章。
+- 输入正确答案(`bots and chips`,注意带空格、and拼全,不是原按钮上的`bots&chips`),确认显示"解密成功"并自动跳转到第四章。
 - 确认整个过程控制台没有报错,移动端视口下输入框/按钮没有溢出。
 - 确认桌面端其它页面(设置/关于/存读档)没有因为这次改动受影响。
 
