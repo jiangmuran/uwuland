@@ -608,3 +608,18 @@ input[type="checkbox"]:checked+label::before {
         font-size: 120px;
     }
 }
+
+.puzzle-input {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
+    margin: 10px 0;
+    padding: 6px 10px;
+    border: solid 2px var(--ink);
+    background-color: white;
+}
+
+.puzzle-feedback {
+    min-height: 1.2em;
+}
