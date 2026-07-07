@@ -537,4 +537,39 @@ input[type="checkbox"]:checked+label::before {
         padding-top: 8px;
         margin-top: 8px;
     }
+
+    #home h1 {
+        font-size: 40px;
+    }
+
+    #about-game {
+        padding: 24px;
+        height: 82%;
+    }
+
+    #range {
+        position: static;
+        width: auto;
+        padding: 16px;
+        box-sizing: border-box;
+    }
+
+    #range p {
+        flex-wrap: wrap;
+    }
+
+    #file-list {
+        flex-direction: column;
+        padding-top: 40px;
+        margin: 0 16px;
+    }
+
+    .box {
+        margin: 0 0 16px 0;
+    }
+
+    #state {
+        max-width: calc(100vw - 20px);
+        box-sizing: border-box;
+    }
 }
