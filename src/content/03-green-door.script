@@ -171,4 +171,5 @@ eebot虽没FoolishBird那么聪明，但功能要多得多。
 !pause
 !head #eee
 所以，解码的结果是？
-!pick 「bots&chips」 四、蓝色的海
+!puzzle base64decode:Ym90cyBhbmQgY2hpcHM=
+!load 四、蓝色的海

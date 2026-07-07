@@ -27,10 +27,19 @@ describe('剧情内容迁移', () => {
     if (last.kind === 'pick') expect(last.targets).toEqual(['二、灰色的屋']);
   });
 
-  it('三、绿色的门 结尾正确跳转到四、蓝色的海', () => {
+  it('三、绿色的门 结尾是谜题,解密成功后跳转到四、蓝色的海', () => {
     const nodes = parseScript(CHAPTERS['三、绿色的门']);
+    const puzzleIndex = nodes.findIndex((n) => n.kind === 'puzzle');
+    expect(puzzleIndex).toBeGreaterThan(-1);
+    const puzzleNode = nodes[puzzleIndex];
+    if (puzzleNode.kind === 'puzzle') expect(puzzleNode.name).toBe('base64decode:Ym90cyBhbmQgY2hpcHM=');
+
     const last = nodes[nodes.length - 1];
-    expect(last.kind).toBe('pick');
-    if (last.kind === 'pick') expect(last.targets).toEqual(['四、蓝色的海']);
+    expect(last.kind).toBe('load');
+    if (last.kind === 'load') expect(last.target).toBe('四、蓝色的海');
+
+    // 谜题和章节收尾之间不能有 !pause(见本计划 Global Constraints)
+    const nodesAfterPuzzle = nodes.slice(puzzleIndex + 1);
+    expect(nodesAfterPuzzle.some((n) => n.kind === 'pause')).toBe(false);
   });
 });
